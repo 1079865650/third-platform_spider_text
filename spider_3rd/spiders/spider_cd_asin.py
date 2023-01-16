@@ -38,7 +38,11 @@ class SpiderCdSpider(scrapy.Spider):
     Base.metadata.schema = 'spider'
     #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
     AsinTask = type('task',(Base,AsinTaskTemplate),{'__tablename__':'sp_plat_site_asin_info_task'})
-    asintasks = sess.query(AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).filter(and_(AsinTask.status == None, AsinTask.plat == 'CD')).distinct().limit(5)
+    AsinAtrr = type('task',(Base,AsinAttrTemplate),{'__tablename__':'sp_plat_site_asin_attr'})
+    asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)).filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
+    # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
+    # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
+
     # .all()
     sess.close()
 
@@ -62,7 +66,7 @@ class SpiderCdSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        for asin in self.asintasks[:2]:
+        for asin in self.asintasks:
             yield Request(url = asin.href, callback=self.parse, meta={'id': asin.id, 'asin': asin.asin,'plat': asin.plat, 'site': asin.site}, headers = self.headers_html)
 
     def parse(self, response):
@@ -73,33 +77,21 @@ class SpiderCdSpider(scrapy.Spider):
 
         doc = pq(response.text)
         
-        item = {}
+        item_attr = {}
 
-        item['plat'] = plat
-        item['site'] = site
-        item['asin'] = asin
-        item['create_time'] = datetime.now()
-        
-        item_attr = item.copy()
+        item_attr['plat'] = plat
+        item_attr['site'] = site
+        item_attr['asin'] = asin
 
-        item_attr['seller'] = '111'
-        item_attr['brand'] = '222'
-        item_attr['shift_date'] = datetime.now()
-        item_attr['update_time'] = datetime.now()
+        item_attr['seller'] = doc('.fpSellerName').text()
+        item_attr['brand'] = item_attr['seller']
+
+        if 'discount à volonté' in doc('.fpCDAVLayerInfo.jsOverlay span').text():
+            item_attr['sellertype'] = 'FBC'
+
+        item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        item_attr['update_time'] = item_attr['create_time']
 
         yield {'data':item_attr,'type':'asin_attr'}
 
-        item_rank = item.copy()
-
-        item_rank['category1'] = '111'
-        item_rank['rank1'] = '222'
-        item_rank['category2'] = '333'
-        item_rank['rank2'] = '333'
-
-        item_rank['price'] = '333'
-        item_rank['reviews'] = '333'
-        item_rank['rating'] = '333'
-
-        yield {'data':item_rank,'type':'asin_rank'}
-
-        yield {'data':{'id': id, 'update_time': datetime.now()},'type':'asin_task'}
+        yield {'data':{'id': id},'type':'asin_task'}

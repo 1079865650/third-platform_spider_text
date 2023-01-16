@@ -94,5 +94,8 @@ class AsinRankTemplate():
     rating = Column(Float) # 评分
     reviews = Column(Integer) # 评价数
     sp_tag = Column(String(100))  # 广告标识
+    page_index = Column(Integer) # 页面排序
+    page = Column(Integer) #页数
+    sellertype = Column(String(10))  # 卖家类型
 
 

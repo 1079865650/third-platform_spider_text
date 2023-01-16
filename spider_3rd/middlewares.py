@@ -9,11 +9,7 @@ from scrapy import signals
 from itemadapter import is_item, ItemAdapter
 
 import time
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support import expected_conditions as EC
+import undetected_chromedriver as uc
 from scrapy.http.response.html import HtmlResponse
 import os
 
@@ -72,14 +68,32 @@ class Spider3RdDownloaderMiddleware:
 
     def __init__(self):
 
+        chrome_options = uc.ChromeOptions()
+        # chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument(f"--proxy-server=http://192.168.100.24:60021")
+        chrome_options.add_argument("--disable-popup-blocking")
+        chrome_options.add_argument("--profile-directory=Default")
+        chrome_options.add_argument("--ignore-certificate-errors")
+        chrome_options.add_argument("--disable-plugins-discovery")
+        chrome_options.add_argument('--no-first-run')
+        chrome_options.add_argument('--no-service-autorun')
+        chrome_options.add_argument('--no-default-browser-check')
+        chrome_options.add_argument('--password-store=basic')
+        chrome_options.add_argument('--no-sandbox')
+
         # os.system("start C://Program Files//Google//Chrome//Application//chrome.exe --remote-debugging-port=9222")
-        subprocess.Popen(r'C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="F:\MyChromeDevUserData"')
-        time.sleep(4)
-        chrome_options=Options()
-        chrome_options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
+        # subprocess.Popen(r'C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="F:\MyChromeDevUserData"')
+        # time.sleep(4)
+        # chrome_options=Options()
+        # chrome_options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
         driver_path = r'F:\zhangcrworkspace\23年1月\spider_3rd\spider_3rd\chromedriver'            #把浏览器驱动器放在任意位置都可以
+        self.driver = uc.Chrome(driver_executable_path=driver_path,options = chrome_options)
         # self.driver = webdriver.Chrome(executable_path=driver_path)
-        self.driver = webdriver.Chrome(executable_path=driver_path,options=chrome_options);
+        # self.driver = webdriver.Chrome(executable_path=driver_path,options=chrome_options);
 
     @classmethod
     def from_crawler(cls, crawler):

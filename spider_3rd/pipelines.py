@@ -68,22 +68,23 @@ class AsinSpidersPipeline(object):
 
         # 更新抓取asin状态
         if item['type'] == 'asin_task':
-            self.sess.query(self.Asin).filter(and_(self.Asin.id == item['data']['id'])).update({"status": 'crawled','update_time':datetime.now().strftime("%Y-%d-%m %H:%M:%S")})
+            self.sess.query(self.Asin).filter(and_(self.Asin.id == item['data']['id'])).update({"status": 'crawled','update_time':datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
             self.sess.commit()
             return item
 
         # 删除老属性 新增新属性
         elif item['type'] == 'asin_attr':
             # 删除新增
-            # self.sess.delete(self.AsinAttr).filter(and_(self.AsinAttr.site == item['data']['site'],self.AsinAttr.asin == item['data']['asin']))
+            self.sess.query(self.AsinAttr).filter(and_(self.AsinAttr.site == item['data']['site'],self.AsinAttr.asin == item['data']['asin'])).delete()
             self.sess.add(self.AsinAttr(**item['data']))
             self.sess.commit()
             return item
         
         # 插入新的时序数据
         elif item['type'] == 'asin_rank':
-            self.sess.add(self.AsinRank(**item['data']))
-            self.sess.commit()
+            for i in item['data']:
+                self.sess.add(self.AsinRank(**i))
+                self.sess.commit()
             return item
         else:
             return item

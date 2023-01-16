@@ -4,6 +4,7 @@ from scrapy import Request
 
 from ..items import * 
 from ..db_utils import * 
+from ..parse_utils import *
 
 from sqlalchemy import create_engine,Column,Integer,TIMESTAMP,Float,String,Table,MetaData
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,7 +24,7 @@ class SpiderCdSpider(scrapy.Spider):
 
     custom_settings = {
         'LOG_LEVEL': 'INFO', # 日志级别
-        'DOWNLOAD_DELAY' : 1,  # 抓取延迟
+        'DOWNLOAD_DELAY' : 5,  # 抓取延迟
         'CONCURRENT_REQUESTS':20,  # 并发限制
         'DOWNLOAD_TIMEOUT':60 # 请求超时
     }
@@ -38,7 +39,8 @@ class SpiderCdSpider(scrapy.Spider):
     Base.metadata.schema = 'spider'
     #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
     CategoryTask = type('task',(Base,TaskTemplate),{'__tablename__':'sp_plat_site_task'})
-    categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code, CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage).filter(and_(CategoryTask.status == None, CategoryTask.plat == 'CD')).distinct().limit(1)
+    categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code, CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage).filter(and_(CategoryTask.status == None, CategoryTask.plat == 'CD')).distinct()
+    # .limit(5)
     # .all()
     sess.close()
 
@@ -62,10 +64,13 @@ class SpiderCdSpider(scrapy.Spider):
     }
 
     def start_requests(self):
+        task_list = []
         for category in self.categorytasks:
-            for page in range(category.link_maxpage):
-                print(page)
-                yield Request(url = category.category_link + '?page=' + str(page), callback=self.parse, meta={'id': category.id, 'task_code': category.task_code, 'plat': category.plat, 'site': category.site, 'page': page}, headers = self.headers_html)
+            for page in range(1,category.link_maxpage+1):
+                task_list.append({"url": category.category_link.replace('#_his_','') + '?page=' + str(page), "meta": {'id': category.id, 'task_code': category.task_code, 'plat': category.plat, 'site': category.site, 'page': page}})
+        
+        for t in task_list:
+            yield Request(url = t['url'], callback=self.parse, meta= t['meta'], headers = self.headers_html)
 
     def parse(self, response):
         id = response.meta['id']
@@ -76,7 +81,8 @@ class SpiderCdSpider(scrapy.Spider):
 
         doc = pq(response.text)
 
-        itemlist = []
+        item_cate_list = []
+        item_rank_list = []
 
         count = 0
 
@@ -84,16 +90,41 @@ class SpiderCdSpider(scrapy.Spider):
             item = {}
             count += 1
             item['asin'] = d.attr('data-sku')
-            item['href'] = d('a').attr('href').split('?')[0]
-            item['cate_task_code'] = task_code
+            item['create_time'] = datetime.now()
             item['plat'] = plat
             item['site'] = site
-            item['bsr_index'] = count
-            item['create_time'] = datetime.now()
-            if 'sponsor' in d('.c-mention').text().lower():
-                item['sp_tag'] = 'sp'
 
-            itemlist.append(item)
+            item_cate = item.copy()
+            item_cate['href'] = d('a').attr('href').split('?')[0]
+            item_cate['cate_task_code'] = task_code
+            item_cate['bsr_index'] = count
+            item_cate_list.append(item_cate)
+        
+            if 'sponsor' in d('.c-mention').text().lower():
+                item_cate['sp_tag'] = 'sp'
+
+            item_rank = item.copy()
+
+            item_rank['category1'] = ''
+            item_rank['rank1'] = ''
+            item_rank['category2'] = ''
+            item_rank['rank2'] = ''
+            item_rank['page_index'] = count
+            item_rank['page'] = page
+
+            item_rank['price'] = price_parse(d('.hideFromPro.price').text().replace('€','.'))
+            item_rank['reviews'] = extract_alp_number(d('.c-stars-result__text').text())
+            item_rank['rating'] = extract_number(d('.c-stars-result').text().split('étoiles sur')[0])
+            
+            if 'sponsor' in d('.c-mention').text().lower():
+                item_rank['sp_tag'] = 'sp'
+
+            if 'discount à volonté' in d('.productCenterZone').text():
+                item_rank['sellertype'] = 'FBC'
+
+            item_rank_list.append(item_rank)
 
         yield {'data':{'id': id, 'page': page},'type':'category_task'}
-        yield {'data':itemlist,'type':'asin_task_add'}
+        yield {'data':item_cate_list,'type':'asin_task_add'}
+        yield {'data':item_rank_list,'type':'asin_rank'}
+
