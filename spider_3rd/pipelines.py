@@ -62,7 +62,9 @@ class AsinSpidersPipeline(object):
         #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
         self.Asin = type('asin',(Base,AsinTaskTemplate),{'__tablename__':'sp_plat_site_asin_info_task'})
         self.AsinAttr = type('asin_attr',(Base,AsinAttrTemplate),{'__tablename__':'sp_plat_site_asin_attr'})
-        self.AsinRank = type('asin_rank',(Base,AsinRankTemplate),{'__tablename__':'sp_plat_site_asin_rank_cd'})
+        self.AsinRankCD = type('asin_rank',(Base,AsinRankTemplate),{'__tablename__':'sp_plat_site_asin_rank_cd'})
+        self.AsinRankMano = type('asin_rank',(Base,AsinRankTemplate),{'__tablename__':'sp_plat_site_asin_rank_mano'})
+        self.AsinRankConforame = type('asin_rank',(Base,AsinRankTemplate),{'__tablename__':'sp_plat_site_asin_rank_conforama'})
 
     def process_item(self,item,spider):#爬取过程中执行的函数
 
@@ -83,8 +85,15 @@ class AsinSpidersPipeline(object):
         # 插入新的时序数据
         elif item['type'] == 'asin_rank':
             for i in item['data']:
-                self.sess.add(self.AsinRank(**i))
-                self.sess.commit()
+                if i['plat'] == 'CD':
+                    self.sess.add(self.AsinRankCD(**i))
+                    self.sess.commit()
+                if i['plat'] == 'Conforama':
+                    self.sess.add(self.AsinRankConforame(**i))
+                    self.sess.commit()
+                if i['plat'] == 'Mano':
+                    self.sess.add(self.AsinRankMano(**i))
+                    self.sess.commit()
             return item
         else:
             return item
