@@ -1,3 +1,5 @@
+import sys
+
 import scrapy
 
 from scrapy import Request
@@ -39,7 +41,13 @@ class SpiderConforamaSpider(scrapy.Spider):
     Base.metadata.schema = 'spider'
     #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
     CategoryTask = type('task',(Base,TaskTemplate),{'__tablename__':'sp_plat_site_task'})
-    categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code, CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage).filter(and_(CategoryTask.status == None, CategoryTask.plat == 'Conforama')).distinct()
+    # categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code
+    #                            , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
+    #     .filter(and_(CategoryTask.status == None, CategoryTask.plat == 'Conforama')).distinct()
+    # 抓取页面 不在判断 CategoryTask.status 是否为 None
+    categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code
+                               , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
+        .filter(CategoryTask.plat == 'Conforama').distinct()
     # .limit(5)
     # .all()
     sess.close()
@@ -65,9 +73,27 @@ class SpiderConforamaSpider(scrapy.Spider):
 
     def start_requests(self):
         task_list = []
+        print(self.categorytasks)
+        # categoryTasks 在 sp_plat_site_task 里面拿到 需要抓取的url信息  列表里面有18条信息  [:1] 切片只取第一条
         for category in self.categorytasks:
+            # 遍历 categoryTasks 到 category 根据 category.link_maxpage+1 进行url拼接然后翻页
             for page in range(1,category.link_maxpage+1):
-                task_list.append({"url": category.category_link.replace('#_his_','') + '?page=' + str(page), "meta": {'id': category.id, 'task_code': category.task_code, 'plat': category.plat, 'site': category.site, 'page': page}})
+            # for page in range(1, 2):
+            # 只翻一页
+            # for page in range(1, 2):
+                # 每一个列表页的循环翻页的url信息 append到task_list
+                # task_list.append({"url": category.category_link.replace('#_his_','') + '?page=' + str(page)
+                #                      , "meta": {'id': category.id, 'task_code': category.task_code
+                #         , 'plat': category.plat, 'site': category.site, 'page': page}})
+            # Conforama的url拼接  https://www.conforama.fr/recherche-conforama/canap%C3%A9?fromSearch=canap%C3%A9
+                task_list.append({"url": category.category_link + '&page=' + str(page)
+                                 , "meta": {'id': category.id, 'task_code': category.task_code
+                    , 'plat': category.plat, 'site': category.site, 'page': page}})
+        # print("task_list===============")
+        # print(len(task_list))  140 链接全部拿到
+        # print("task_list=====================")
+        # print(task_list[1])
+        # sys.exit()
         
         for t in task_list:
             yield Request(url = t['url'], callback=self.parse, meta= t['meta'], headers = self.headers_html)
@@ -78,26 +104,37 @@ class SpiderConforamaSpider(scrapy.Spider):
         plat = response.meta['plat']
         site = response.meta['site']
         page = response.meta['page']
-
+        # print(type(response))   <class 'scrapy.http.response.html.HtmlResponse'>
+        # print(type(response.text))   <class 'str'>
         doc = pq(response.text)
-
+        # <class 'pyquery.pyquery.PyQuery'>
         item_cate_list = []
         item_rank_list = []
-
         count = 0
+        print(count)
+        print("=========================")
+        # 可以取到值doc('div#hits li[data-id]')  之前由于页面没有完全记载 就发出请求 所以没有取到值
+        # b = doc('div#hits li[data-id]')
+        # print(b)
 
-        for d in doc('div.lpMain li[data-sku]').items():
+        for d in doc('div.awk-descent-products.grid li[data-id]').items():
+            # print(d)
             item = {}
             count += 1
-            item['asin'] = d.attr('data-sku')
+            # if count == 3:
+            #     break
+            item['asin'] = d.attr('data-id')
+            print(item['asin'])
             item['create_time'] = datetime.now()
             item['plat'] = plat
             item['site'] = site
 
+            # item_cate主要抓详情页href
             item_cate = item.copy()
-            item_cate['href'] = d('a').attr('href').split('?')[0]
+            item_cate['href'] = d('a.bindEvent.extendLink').attr('href').split('?')[0]
             item_cate['cate_task_code'] = task_code
             item_cate['bsr_index'] = count
+            # item_cate_list 存放 详情页信息
             item_cate_list.append(item_cate)
         
             if 'sponsor' in d('.c-mention').text().lower():
@@ -112,19 +149,34 @@ class SpiderConforamaSpider(scrapy.Spider):
             item_rank['page_index'] = count
             item_rank['page'] = page
 
-            item_rank['price'] = price_parse(d('.hideFromPro.price').text().replace('€','.'))
-            item_rank['reviews'] = extract_alp_number(d('.c-stars-result__text').text())
-            item_rank['rating'] = extract_number(d('.c-stars-result').text().split('étoiles sur')[0])
+            # print("price===================")
+            # print(d('div.price-product.typo-prix.eco-price').html())  <class 'str'>
+            # print(type(d('div.price-product.typo-prix.eco-price ').html()))   <class 'str'>
+            # 有的列表没有刷出来 取到的值为空 后续str.split 报空指针异常
+            # item_rank['price'] = extract_price(d('div.price-product.typo-prix.eco-price').html())
+            # item_rank['reviews'] = extract_alp_number(d('.BVBrowserWebkit .stars').attr('data'))
+            # item_rank['rating'] = d('div#BVRRSummaryContainer span.stars').attr('data')
+            # item_rank['price'] = price_parse(d('.hideFromPro.price').text().replace('€','.'))
+            # item_rank['reviews'] = extract_alp_number(d('.c-stars-result__text').text())
+            # item_rank['rating'] = extract_number(d('.c-stars-result').text().split('étoiles sur')[0])
             
             if 'sponsor' in d('.c-mention').text().lower():
                 item_rank['sp_tag'] = 'sp'
 
             if 'discount à volonté' in d('.productCenterZone').text():
                 item_rank['sellertype'] = 'FBC'
-
+            # print("item_cate_list=====================")
+            # print(item_rank)
+            # print("item_rank_list===========================")
+            # print(item_cate)
             item_rank_list.append(item_rank)
 
+
         yield {'data':{'id': id, 'page': page},'type':'category_task'}
+        #item_cate_list 存放详情页信息 放到sp_plat_site_asin_info_task里面查询详情页信息
+        print("item_cate_list==================")
+        print(item_cate_list)
         yield {'data':item_cate_list,'type':'asin_task_add'}
+        #item_rank_list 存放列表页信息 sp_plat_site_asin_rank_conforma 里面的主要信息
         yield {'data':item_rank_list,'type':'asin_rank'}
 

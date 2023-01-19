@@ -1,9 +1,12 @@
+import sys
+
 import scrapy
 
 from scrapy import Request
 
 from ..items import * 
-from ..db_utils import * 
+from ..db_utils import *
+from ..parse_utils import *
 
 from sqlalchemy import create_engine,Column,Integer,TIMESTAMP,Float,String,Table,MetaData
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,12 +42,21 @@ class SpiderConforamaSpider(scrapy.Spider):
     #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
     AsinTask = type('task',(Base,AsinTaskTemplate),{'__tablename__':'sp_plat_site_asin_info_task'})
     AsinAtrr = type('task',(Base,AsinAttrTemplate),{'__tablename__':'sp_plat_site_asin_attr'})
-    asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)).filter(and_(AsinTask.status == None, AsinTask.plat == 'Conforama', AsinAtrr.brand.is_(None))).distinct()
+    # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site)\
+    #     .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site))\
+    #     .filter(and_(AsinTask.status == None, AsinTask.plat == 'Conforama', AsinAtrr.brand.is_(None))).distinct()
+    asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site) \
+        .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)) \
+        .filter(and_( AsinTask.plat == 'Conforama')).distinct()
     # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
     # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
 
     # .all()
     sess.close()
+    # print("asintasks================")
+    # print(type(asintasks))   <class 'sqlalchemy.orm.query.Query'>
+    # print(asintasks)
+    # sys.exit()
 
     headers_html = {
         'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -78,12 +90,19 @@ class SpiderConforamaSpider(scrapy.Spider):
         doc = pq(response.text)
         
         item_attr = {}
+        item_rank_list = []
 
         item_attr['plat'] = plat
-        item_attr['site'] = site
         item_attr['asin'] = asin
-
-        item_attr['seller'] = doc('.fpSellerName').text()
+        # item_rank 写入 sp_plat_site_asin_rank_conforama
+        item_rank = item_attr.copy()
+        # 抓取prive,rating,reviews
+        item_rank['price'] = extract_price(doc('div.currentPrice.typo-prix').html())
+        item_rank['reviews'] = extract_number(doc('div.bv_numReviews_component_container div.bv_numReviews_text').text())
+        item_rank['rating'] = doc('div.bv_avgRating_component_container.notranslate').text()
+        item_rank_list.append(item_rank)
+        item_attr['site'] = site
+        item_attr['seller'] = doc('span.confoNameColor').text()
         item_attr['brand'] = item_attr['seller']
 
         if 'discount à volonté' in doc('.fpCDAVLayerInfo.jsOverlay span').text():
@@ -95,3 +114,5 @@ class SpiderConforamaSpider(scrapy.Spider):
         yield {'data':item_attr,'type':'asin_attr'}
 
         yield {'data':{'id': id},'type':'asin_task'}
+
+        yield {'data':item_rank_list,'type':'asin_rank'}

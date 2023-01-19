@@ -88,17 +88,17 @@ class SpiderManoSpider(scrapy.Spider):
 
         count = 0
 
-        for d in doc('div.lpMain li[data-sku]').items():
+        for d in doc('div.tG5dru.Pjvmj0.Yf3Lox a[href]').items():
             item = {}
             count += 1
-            item['asin'] = d.attr('data-sku')
+            item['asin'] = d('g#iconsSystemInfoOutline').attr('id')
             item['create_time'] = datetime.now()
             item['plat'] = plat
             item['site'] = site
 
             item_cate = item.copy()
             # 换站点需要修改
-            item_cate['href'] = d('a').attr('href').split('?')[0]
+            item_cate['href'] = d.attr('href').split('?')[0]
             
             item_cate['cate_task_code'] = task_code
             item_cate['bsr_index'] = count
@@ -117,9 +117,9 @@ class SpiderManoSpider(scrapy.Spider):
             item_rank['page'] = page
 
             # 换站点需要修改
-            item_rank['price'] = price_parse(d('.hideFromPro.price').text().replace('€','.'))
-            item_rank['reviews'] = extract_alp_number(d('.c-stars-result__text').text())
-            item_rank['rating'] = extract_number(d('.c-stars-result').text().split('étoiles sur')[0])
+            item_rank['price'] = price_parse(d('.sryUkI').text())
+            item_rank['reviews'] = extract_alp_number(d('div.c6e_9J5.Ij0Ham.uBlqLg.T4cnaA').text())
+            item_rank['rating'] = extract_number(d('span.BC8X0P').attr('aria-label'))
             
             if 'sponsor' in d('.c-mention').text().lower():
                 item_rank['sp_tag'] = 'sp'

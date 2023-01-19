@@ -39,7 +39,9 @@ class SpiderCdSpider(scrapy.Spider):
     #动态创建orm类,必须继承Base, 这个表名是固定的,如果需要为每个爬虫创建一个表,请使用process_item中的
     AsinTask = type('task',(Base,AsinTaskTemplate),{'__tablename__':'sp_plat_site_asin_info_task'})
     AsinAtrr = type('task',(Base,AsinAttrTemplate),{'__tablename__':'sp_plat_site_asin_attr'})
-    asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)).filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
+    asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site)\
+        .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site))\
+        .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
     # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
     # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
 
@@ -62,7 +64,8 @@ class SpiderCdSpider(scrapy.Spider):
         'sec-fetch-site': "same-origin",
         'sec-fetch-user': '?1',
         'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
+        # 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
     }
 
     def start_requests(self):
@@ -89,7 +92,8 @@ class SpiderCdSpider(scrapy.Spider):
         if 'discount à volonté' in doc('.fpCDAVLayerInfo.jsOverlay span').text():
             item_attr['sellertype'] = 'FBC'
 
-        item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+
+        item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         item_attr['update_time'] = item_attr['create_time']
 
         yield {'data':item_attr,'type':'asin_attr'}

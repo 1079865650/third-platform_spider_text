@@ -87,11 +87,14 @@ class Spider3RdDownloaderMiddleware:
 
         # os.system("start C://Program Files//Google//Chrome//Application//chrome.exe --remote-debugging-port=9222")
         # subprocess.Popen(r'C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="F:\MyChromeDevUserData"')
-        # time.sleep(4)
+        # time.sleep(3)
         # chrome_options=Options()
-        # chrome_options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
-        driver_path = r'F:\zhangcrworkspace\23年1月\spider_3rd\spider_3rd\chromedriver'            #把浏览器驱动器放在任意位置都可以
-        self.driver = uc.Chrome(driver_executable_path=driver_path,options = chrome_options)
+        chrome_options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
+        # driver_path = r'F:\dependency\chromedriver_win32 (78.0.3904.105)\chromedriver.exe'            #把浏览器驱动器放在任意位置都可以
+        driver_path = r'F:\dependency\chromedriver_win32 (109.0.5414.74)\chromedriver.exe'            #把浏览器驱动器放在任意位置都可以
+        browser_executable_path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+        self.driver = uc.Chrome(driver_executable_path=driver_path,options = chrome_options,browser_executable_path=browser_executable_path)
+
         # self.driver = webdriver.Chrome(executable_path=driver_path)
         # self.driver = webdriver.Chrome(executable_path=driver_path,options=chrome_options);
 
@@ -115,7 +118,21 @@ class Spider3RdDownloaderMiddleware:
         
         # 我们需要拦截请求，由selenium发起请求，将获取的数据封装成一个response对象。
         self.driver.get(request.url)
-
+        # if str(request.url).__contains__('objectID'):
+        #     time.sleep(3)
+        # else:
+        #     time.sleep(6)
+        time.sleep(3)
+        # self.driver.implicitly_wait(30);
+        # js = "var q=document.documentElement.scrollTop=2000"
+        # self.driver.execute_script(js)
+        # time.sleep(10)
+        # js = "var q=document.documentElement.scrollTop=4500"
+        # self.driver.execute_script(js)
+        # time.sleep(10)
+        # js = "var q=document.documentElement.scrollTop=6000"
+        # self.driver.execute_script(js)
+        # time.sleep(10)
         response = HtmlResponse(request.url,body=self.driver.page_source,request=request,encoding='utf-8')
 
         return response

@@ -14,6 +14,19 @@ def extract_number(string_value):
 
     return string_value
 
+def extract_price(string_value):
+    #  处理 '\n\t\t\t\t\t89<sup>€99</sup>\n\t\t\t' or '199<sup>€</sup>' 转换为89.99  199.00
+    # print(type(string_value)) <class 'str'>
+    print("string_value=============")
+    print(string_value)
+    price_split = str(string_value).split("€")
+    price_pre = re.sub(r'[^0-9]', '', price_split[0])
+    price_suf = re.sub(r'[^0-9]', '', price_split[1])
+    if price_suf == '':
+        price_suf = '00'
+    price = price_pre+'.'+price_suf
+    return price
+
 def price_parse(string_value):
 	# 形如 '169,99.' 处理
 
