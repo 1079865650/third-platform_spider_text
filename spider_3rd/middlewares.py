@@ -66,7 +66,7 @@ class Spider3RdDownloaderMiddleware:
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
 
-    def __init__(self):
+    def __init__(self):  # 用于初始化类
 
         chrome_options = uc.ChromeOptions()
         # chrome_options.add_argument('--blink-settings=imagesEnabled=false')

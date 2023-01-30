@@ -78,7 +78,6 @@ class SpiderConforamaSpider(scrapy.Spider):
         for category in self.categorytasks:
             # 遍历 categoryTasks 到 category 根据 category.link_maxpage+1 进行url拼接然后翻页
             for page in range(1,category.link_maxpage+1):
-            # for page in range(1, 2):
             # 只翻一页
             # for page in range(1, 2):
                 # 每一个列表页的循环翻页的url信息 append到task_list
