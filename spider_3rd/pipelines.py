@@ -96,7 +96,9 @@ class AsinSpidersPipeline(object):
                             i["price"] = '0'
                             # 从asin_rank中修改表数据  列表页已经写入了一部分数据
                         self.sess.query(self.AsinRankConforame).filter(and_(self.AsinRankConforame.plat == i['plat'],
-                                                                            self.AsinRankConforame.asin == i['asin'])) \
+                                                                            self.AsinRankConforame.asin == i['asin'],
+                                                                            self.AsinRankConforame.create_time > datetime.now().strftime("%Y-%m-%d")
+                                                                            )) \
                             .update({"price": i['price'], "rating": i['rating'], "reviews": i['reviews']})
                         # self.sess.add(self.AsinRankConforame(**i))
                         self.sess.commit()
@@ -104,6 +106,8 @@ class AsinSpidersPipeline(object):
                         self.sess.add(self.AsinRankConforame(**i))
                         self.sess.commit()
                 if i['plat'] == 'Mano':
+                    print("item==============")
+                    print(i)
                     self.sess.add(self.AsinRankMano(**i))
                     self.sess.commit()
             return item

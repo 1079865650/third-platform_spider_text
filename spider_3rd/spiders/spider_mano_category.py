@@ -76,9 +76,9 @@ class SpiderManoSpider(scrapy.Spider):
 
     def start_requests(self):
         task_list = []
-        for category in self.categorytasks:
-            for page in range(1,category.link_maxpage+1):
-            # for page in range(1, 2):
+        for category in self.categorytasks[:1]:
+            # for page in range(1,category.link_maxpage+1):
+            for page in range(1, 2):
                 task_list.append({"url": category.category_link + '?page=' + str(page)
                                      , "meta": {'id': category.id, 'task_code': category.task_code
                         , 'plat': category.plat, 'site': category.site, 'page': page}})
@@ -92,7 +92,7 @@ class SpiderManoSpider(scrapy.Spider):
         plat = response.meta['plat']
         site = response.meta['site']
         page = response.meta['page']
-        site_category = site[5:7]
+        # site_category = site[5:7]
 
         doc = pq(response.text)
 
@@ -105,13 +105,13 @@ class SpiderManoSpider(scrapy.Spider):
         # print("================bbbb")
         # print(len(b))
 
-        if site_category == 'fr':
+        if 'fr' in site:
             for d in doc('div.tG5dru a').items():
                 item = {}
                 count += 1
                 href = d.attr('href')
 
-                asin = href[-8:]
+                asin = extract_number(href[-8:])
                 item['asin'] = asin
                 item['create_time'] = datetime.now()
                 item['plat'] = plat
@@ -138,9 +138,12 @@ class SpiderManoSpider(scrapy.Spider):
 
                 # mono站点 price reviews rating
                 price = d('span.I0CDxs.w28b5y.OEAymi.BQETCL span.c9IOOfx').text() + '.' + d('span.I0CDxs.w28b5y.OEAymi.BQETCL span.HvMyvS').text()
-                item_rank['price'] = price
+                item_rank['price'] = add_decimal(price)
                 item_rank['reviews'] = extract_number(d('div.c_NUeEq.c9yZWxl.nzlq_H.oaBOsl').text())
-                item_rank['rating'] = str((d('span.MXSls8').attr('aria-label')))[:3]
+                rating = str((d('span.MXSls8').attr('aria-label')))[:3]
+                if '/' in rating:
+                    rating = rating[:1]
+                item_rank['rating'] = rating
 
                 if 'sponsor' in d('.c-mention').text().lower():
                     item_rank['sp_tag'] = 'sp'
@@ -163,13 +166,13 @@ class SpiderManoSpider(scrapy.Spider):
                 item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 item_attr['update_time'] = item_attr['create_time']
                 yield {'data': item_attr, 'type': 'asin_attr'}
-                yield {'data': {'id': id}, 'type': 'asin_task'}
-        elif site_category == 'es':
+                # yield {'data': {'id': id}, 'type': 'asin_task'}
+        elif 'es' in site or 'it' in site:
             for d in doc('div.tG5dru a').items():
                 item = {}
                 count += 1
                 href = d.attr('href')
-                asin = href[-8:]
+                asin = extract_number(href[-8:])
                 item['asin'] = asin
                 item['create_time'] = datetime.now()
                 item['plat'] = plat
@@ -194,11 +197,13 @@ class SpiderManoSpider(scrapy.Spider):
                 item_rank['page'] = page
 
                 # mono站点 price reviews rating
-                price = d('span.c9IOOfx').text() + '.' + d('span.HvMyvS').text()
-                item_rank['price'] = price
+                price = d('span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.c9IOOfx').text() + '.' + d('span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.HvMyvS').text()
+                item_rank['price'] = add_decimal(price)
                 item_rank['reviews'] = extract_number(d('div.c_NUeEq.c9yZWxl.nzlq_H.oaBOsl').text())
-                item_rank['rating'] = str((d('span.MXSls8').attr('aria-label')))[:3]
-
+                rating = str((d('span.MXSls8').attr('aria-label')))[:3]
+                if '/' in rating:
+                    rating = rating[:1]
+                item_rank['rating'] = rating
 
                 if 'sponsor' in d('.c-mention').text().lower():
                     item_rank['sp_tag'] = 'sp'
@@ -221,69 +226,8 @@ class SpiderManoSpider(scrapy.Spider):
                 item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 item_attr['update_time'] = item_attr['create_time']
                 yield {'data': item_attr, 'type': 'asin_attr'}
-                yield {'data': {'id': id}, 'type': 'asin_task'}
-        elif site_category == 'it':
-            for d in doc('div.tG5dru a').items():
-                item = {}
-                count += 1
-                href = d.attr('href')
-                asin = href[-8:]
-                item['asin'] = asin
-                item['create_time'] = datetime.now()
-                item['plat'] = plat
-                item['site'] = site
+                # yield {'data': {'id': id}, 'type': 'asin_task'}
 
-                item_cate = item.copy()
-                # 换站点需要修改
-                item_cate['href'] = href
-
-                item_cate['cate_task_code'] = task_code
-                item_cate['bsr_index'] = count
-                item_cate_list.append(item_cate)
-
-                if 'sponsor' in d('.c-mention').text().lower():
-                    item_cate['sp_tag'] = 'sp'
-
-                item_rank = item.copy()
-                item_rank['category1'] = ''
-                item_rank['rank1'] = ''
-                item_rank['category2'] = ''
-                item_rank['rank2'] = ''
-                item_rank['page_index'] = count
-                item_rank['page'] = page
-
-                # mono站点 price reviews rating
-                price = d('span.c9IOOfx').text() + '.' + d('span.HvMyvS').text()
-                item_rank['price'] = price
-                item_rank['reviews'] = extract_number(d('div.c_NUeEq.c9yZWxl.nzlq_H.oaBOsl').text())
-                item_rank['rating'] = str((d('span.MXSls8').attr('aria-label')))[:3]
-
-                if 'sponsor' in d('.c-mention').text().lower():
-                    item_rank['sp_tag'] = 'sp'
-
-                if 'discount à volonté' in d('.productCenterZone').text():
-                    item_rank['sellertype'] = 'FBC'
-
-                item_rank_list.append(item_rank)
-
-                # 创建一个dict item_attr  在遍历列表页时 处理asin_attr
-                item_attr = {}
-                brand = d('img.iv2zRV').attr('alt')
-                item_attr['plat'] = plat
-                item_attr['site'] = site
-                item_attr['asin'] = asin
-                item_attr['seller'] = brand
-                item_attr['brand'] = brand
-                if 'discount à volonté' in doc('.fpCDAVLayerInfo.jsOverlay span').text():
-                    item_attr['sellertype'] = 'FBC'
-                item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                item_attr['update_time'] = item_attr['create_time']
-                yield {'data': item_attr, 'type': 'asin_attr'}
-                yield {'data': {'id': id}, 'type': 'asin_task'}
-
-        # print("==============item_rank_list")
-        # print(item_rank_list)
-        # 修改sp_plat_site_task里面的状态
         yield {'data':{'id': id, 'page': page},'type':'category_task'}
         # 添加详情页任务
         yield {'data':item_cate_list,'type':'asin_task_add'}

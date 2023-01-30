@@ -3,10 +3,14 @@
 # @Author : wws
 # @File : test
 # @Project : third-platform_spider_text
+import datetime
+
 from db_utils import get_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from spider_3rd.items import TaskTemplate
+from parse_utils import *
+from datetime import datetime
 
 
 @staticmethod
@@ -30,5 +34,33 @@ if __name__ == '__main__':
                                , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
         .filter(CategoryTask.plat == 'Conforama').distinct()
     sess.query()
-    print(type(categorytasks))
+    str = '2023-01-19 13:50:01.959412'
+    date = datetime.now().strftime("%Y-%m-%d")
+    # a = 2
+    # if a ==1 or a==2:
+    #     print("没问题")
+    str1 = 'Aaa'
+    # str2 = '4/5'
+    # if '/' in str2:
+    #     str2 = str2[:1]
+    #     print(str2)
+    a = "123123456."
+    c = "123123456.123"
+
+    # index = a.index('1')
+    # b = a.find('1',3,-1)
+    # print(b)
+    # print(index)
+    # print(type(index))
+    # index = a.index('.')
+    # length = len(c)-1
+    # price = add_decimal(c)
+    # print(price)
+    # print(type(price))
+    str = 'Mano.fr'
+    str11 = 'Mano.es'
+    if '' in str or 'es' in str11:
+        print("没问题")
+
+
 

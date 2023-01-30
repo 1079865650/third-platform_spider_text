@@ -47,7 +47,7 @@ class SpiderConforamaSpider(scrapy.Spider):
     #     .filter(and_(AsinTask.status == None, AsinTask.plat == 'Conforama', AsinAtrr.brand.is_(None))).distinct()
     asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site) \
         .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)) \
-        .filter(and_( AsinTask.plat == 'Conforama')).distinct()
+        .filter(and_(AsinTask.status == None, AsinTask.plat == 'Conforama')).distinct()
     # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
     # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
 
@@ -96,8 +96,13 @@ class SpiderConforamaSpider(scrapy.Spider):
         item_attr['asin'] = asin
         # item_rank 写入 sp_plat_site_asin_rank_conforama
         item_rank = item_attr.copy()
+        item_rank['create_time'] = datetime.now()
         # 抓取prive,rating,reviews
-        item_rank['price'] = extract_price(doc('div.currentPrice.typo-prix').html())
+        try:
+            item_rank['price'] = extract_price(doc('div.currentPrice.typo-prix').html())
+        except:
+            item_rank['price'] = '0';
+
         item_rank['reviews'] = extract_number(doc('div.bv_numReviews_component_container div.bv_numReviews_text').text())
         item_rank['rating'] = doc('div.bv_avgRating_component_container.notranslate').text()
         item_rank_list.append(item_rank)

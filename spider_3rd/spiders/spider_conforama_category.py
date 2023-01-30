@@ -110,8 +110,6 @@ class SpiderConforamaSpider(scrapy.Spider):
         item_cate_list = []
         item_rank_list = []
         count = 0
-        print(count)
-        print("=========================")
         # 可以取到值doc('div#hits li[data-id]')  之前由于页面没有完全记载 就发出请求 所以没有取到值
         # b = doc('div#hits li[data-id]')
         # print(b)
@@ -123,12 +121,12 @@ class SpiderConforamaSpider(scrapy.Spider):
             # if count == 3:
             #     break
             item['asin'] = d.attr('data-id')
-            print(item['asin'])
+            # print(item['asin'])
             item['create_time'] = datetime.now()
             item['plat'] = plat
             item['site'] = site
 
-            # item_cate主要抓详情页href
+            # item_cate主要抓详情页
             item_cate = item.copy()
             item_cate['href'] = d('a.bindEvent.extendLink').attr('href').split('?')[0]
             item_cate['cate_task_code'] = task_code
@@ -164,17 +162,10 @@ class SpiderConforamaSpider(scrapy.Spider):
 
             if 'discount à volonté' in d('.productCenterZone').text():
                 item_rank['sellertype'] = 'FBC'
-            # print("item_cate_list=====================")
-            # print(item_rank)
-            # print("item_rank_list===========================")
-            # print(item_cate)
             item_rank_list.append(item_rank)
-
 
         yield {'data':{'id': id, 'page': page},'type':'category_task'}
         #item_cate_list 存放详情页信息 放到sp_plat_site_asin_info_task里面查询详情页信息
-        print("item_cate_list==================")
-        print(item_cate_list)
         yield {'data':item_cate_list,'type':'asin_task_add'}
         #item_rank_list 存放列表页信息 sp_plat_site_asin_rank_conforma 里面的主要信息
         yield {'data':item_rank_list,'type':'asin_rank'}
