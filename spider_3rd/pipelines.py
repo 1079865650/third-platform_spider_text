@@ -106,8 +106,8 @@ class AsinSpidersPipeline(object):
                         self.sess.add(self.AsinRankConforame(**i))
                         self.sess.commit()
                 if i['plat'] == 'Mano':
-                    print("item==============")
-                    print(i)
+                    # print("item==============")
+                    # print(i)
                     self.sess.add(self.AsinRankMano(**i))
                     self.sess.commit()
             return item

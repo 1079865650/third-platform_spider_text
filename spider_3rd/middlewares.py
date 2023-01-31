@@ -122,7 +122,7 @@ class Spider3RdDownloaderMiddleware:
         #     time.sleep(3)
         # else:
         #     time.sleep(6)
-        time.sleep(3)
+        time.sleep(5)
         # self.driver.implicitly_wait(30);
         # js = "var q=document.documentElement.scrollTop=2000"
         # self.driver.execute_script(js)

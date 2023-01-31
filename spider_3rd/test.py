@@ -34,7 +34,7 @@ if __name__ == '__main__':
                                , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
         .filter(CategoryTask.plat == 'Conforama').distinct()
     sess.query()
-    str = '2023-01-19 13:50:01.959412'
+    # str = '2023-01-19 13:50:01.959412'
     date = datetime.now().strftime("%Y-%m-%d")
     # a = 2
     # if a ==1 or a==2:
@@ -57,10 +57,44 @@ if __name__ == '__main__':
     # price = add_decimal(c)
     # print(price)
     # print(type(price))
-    str = 'Mano.fr'
-    str11 = 'Mano.es'
-    if '' in str or 'es' in str11:
-        print("没问题")
+    # str = 'Mano.fr'
+    #     # str11 = 'Mano.es'
+    #     # if '' in str or 'es' in str11:
+    #     #     print("没问题")
+    # time = datetime.now().strftime("%Y-%m-%d")  # <class 'str'>
+    # time = datetime.now()  # <class 'datetime.datetime'>
+    # print(time)
+    # print(type(time))
+    # item = {}
+    # item['asin'] = "asin"
+    # item['create_time'] = datetime.now()
+    # item['plat'] = "plat"
+    # item['site'] = 'site'
+    # print(item)
+    # print(type(item))
+    # item_test = item.copy()
+    # print(item_test)
+    #
+    # list1 = []
+    # list1 = [1,23,4,5,'321312',321321,5*8]
+    # print(list1)
+    # list2 = list1.copy()
+    # print(list2)
+    # print(type(list2))
+
+
+count = 1
+def judge(self):
+    global count
+    count = 2
+    print("方法里========"+str(count))
+print(type(count))
+print("方法外======="+str(count))
+def judge1():
+    print("方法2里========"+str(count))
+
+# judge()
+# judge1()
 
 
 
