@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9318aa31-51e2-4ab5-9d31-b12ff045782e" name="Changes" comment="添加mano列表页爬取和详情爬取">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/middlewares.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/middlewares.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/parse_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/parse_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/spiders/spider_mano_category.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/spiders/spider_mano_category.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,23 +41,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/pythonProject/python基础",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.editor",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/pythonProject/python基础&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Python.test">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="third-platform_spider_text" />
@@ -180,6 +175,7 @@
       <workItem from="1674954152623" duration="18553000" />
       <workItem from="1675047994633" duration="20632000" />
       <workItem from="1675127121084" duration="13469000" />
+      <workItem from="1675403600043" duration="307000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1673842665932</created>
