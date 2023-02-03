@@ -47,10 +47,7 @@ class SpiderManoSpider(scrapy.Spider):
     #     .filter(and_(CategoryTask.status == None, CategoryTask.plat == 'Mano')).distinct()
     categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code, CategoryTask.plat,
                                CategoryTask.site, CategoryTask.link_maxpage) \
-        .filter(and_(CategoryTask.plat == 'Mano',CategoryTask.update_time < '2023-01-31')).distinct()
-    # print("===================categorytasks")
-    # print(categorytasks)
-    # sys.exit()
+        .filter(and_(CategoryTask.plat == 'Mano', CategoryTask.status == None)).distinct()
     # .limit(5)
     # .all()
     sess.close()
@@ -95,6 +92,7 @@ class SpiderManoSpider(scrapy.Spider):
         id = response.meta['id']
         task_code = response.meta['task_code']
         plat = response.meta['plat']
+
         site = response.meta['site']
         page = response.meta['page']
         # site_category = site[5:7]
@@ -106,109 +104,6 @@ class SpiderManoSpider(scrapy.Spider):
 
         count = 0
 
-        # b = doc('div.tG5dru a')
-        # print("================bbbb")
-        # print(len(b))
-
-        # if 'fr' in site:
-        #     for d in doc('div.tG5dru a').items():
-        #         item = {}
-        #         count += 1
-        #         href = d.attr('href')
-        #         asin = extract_number(href[-8:])
-        #         item['asin'] = asin
-        #         item['create_time'] = datetime.now()
-        #         item['plat'] = plat
-        #         item['site'] = site
-        #
-        #         item_cate = item.copy()
-        #         # 换站点需要修改
-        #         item_cate['href'] = href
-        #         item_cate['cate_task_code'] = task_code
-        #         item_cate['bsr_index'] = count
-        #         item_cate_list.append(item_cate)
-        #
-        #         item_rank = item.copy()
-        #         item_rank['category1'] = ''
-        #         item_rank['rank1'] = ''
-        #         item_rank['category2'] = ''
-        #         item_rank['rank2'] = ''
-        #         item_rank['page_index'] = count
-        #         item_rank['page'] = page
-        #
-        #         # mono站点 price reviews rating
-        #         price = d('span.I0CDxs.w28b5y.OEAymi.BQETCL span.c9IOOfx').text() + '.' + d('span.I0CDxs.w28b5y.OEAymi.BQETCL span.HvMyvS').text()
-        #         item_rank['price'] = add_decimal(price)
-        #         item_rank['reviews'] = extract_number(d('div.c_NUeEq.c9yZWxl.nzlq_H.oaBOsl').text())
-        #         rating = str((d('span.MXSls8').attr('aria-label')))[:3]
-        #         if '/' in rating:
-        #             rating = rating[:1]
-        #         item_rank['rating'] = rating
-        #
-        #         item_rank_list.append(item_rank)
-        #
-        #         # 创建一个dict item_attr  在遍历列表页时 处理asin_attr
-        #         item_attr = {}
-        #         brand = d('img.iv2zRV').attr('alt')
-        #         item_attr['plat'] = plat
-        #         item_attr['site'] = site
-        #         item_attr['asin'] = asin
-        #         item_attr['seller'] = brand
-        #         item_attr['brand'] = brand
-        #
-        #         item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #         item_attr['update_time'] = item_attr['create_time']
-        #         yield {'data': item_attr, 'type': 'asin_attr'}
-        #         # yield {'data': {'id': id}, 'type': 'asin_task'}
-        # elif 'es' in site or 'it' in site:
-        #     for d in doc('div.tG5dru a').items():
-        #         item = {}
-        #         count += 1
-        #         href = d.attr('href')
-        #         asin = extract_number(href[-8:])
-        #         item['asin'] = asin
-        #         item['create_time'] = datetime.now()
-        #         item['plat'] = plat
-        #         item['site'] = site
-        #         item_cate = item.copy()
-        #         # 换站点需要修改
-        #         item_cate['href'] = href
-        #         item_cate['cate_task_code'] = task_code
-        #         item_cate['bsr_index'] = count
-        #         item_cate_list.append(item_cate)
-        #
-        #         item_rank = item.copy()
-        #         item_rank['category1'] = ''
-        #         item_rank['rank1'] = ''
-        #         item_rank['category2'] = ''
-        #         item_rank['rank2'] = ''
-        #         item_rank['page_index'] = count
-        #         item_rank['page'] = page
-        #
-        #         # mono站点 price reviews rating
-        #         price = d('span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.c9IOOfx').text() + '.' + d('span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.HvMyvS').text()
-        #         item_rank['price'] = add_decimal(price)
-        #         item_rank['reviews'] = extract_number(d('div.c_NUeEq.c9yZWxl.nzlq_H.oaBOsl').text())
-        #         rating = str((d('span.MXSls8').attr('aria-label')))[:3]
-        #         if '/' in rating:
-        #             rating = rating[:1]
-        #         item_rank['rating'] = rating
-        #
-        #         item_rank_list.append(item_rank)
-        #
-        #         # 创建一个dict item_attr  在遍历列表页时 处理asin_attr
-        #         item_attr = {}
-        #         brand = d('img[alt]').eq(1).attr('alt')
-        #         item_attr['plat'] = plat
-        #         item_attr['site'] = site
-        #         item_attr['asin'] = asin
-        #         item_attr['seller'] = brand
-        #         item_attr['brand'] = brand
-        #
-        #         item_attr['create_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #         item_attr['update_time'] = item_attr['create_time']
-        #         yield {'data': item_attr, 'type': 'asin_attr'}
-        #         # yield {'data': {'id': id}, 'type': 'asin_task'}
         for d in doc('div.tG5dru.Pjvmj0 a').items():
             item = {}
             count += 1
@@ -238,13 +133,6 @@ class SpiderManoSpider(scrapy.Spider):
             item_rank['rank2'] = ''
             item_rank['page_index'] = count
             item_rank['page'] = page
-            # mono站点 price reviews rating  fr 和 es it 网站的部分元素标签不同
-            # if 'fr' in site:
-            #     price = d('span.I0CDxs.w28b5y.OEAymi.BQETCL span.c9IOOfx').text() + '.' + d(
-            #         'span.I0CDxs.w28b5y.OEAymi.BQETCL span.HvMyvS').text()
-            # else:
-            #     price = d('span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.c9IOOfx').text() + '.' + d(
-            #     'span.I0CDxs.w28b5y.a2ETLS.c1q6cDr.c8lRBxl span.HvMyvS').text()
             price = d('span[data-testid="price-main"] span.AQBkgB').text() + '.' + d('span[data-testid="price-main"] span.ReBd-C').text()
             item_rank['price'] = add_decimal(price)
             item_rank['reviews'] = extract_number(d('div.cIGgIj.QS3HoR.l91lbd.c7fle3g').text())

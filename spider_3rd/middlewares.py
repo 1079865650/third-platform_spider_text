@@ -122,17 +122,18 @@ class Spider3RdDownloaderMiddleware:
         #     time.sleep(3)
         # else:
         #     time.sleep(6)
-        time.sleep(5)
+        time.sleep(2)
         # self.driver.implicitly_wait(30);
-        # js = "var q=document.documentElement.scrollTop=2000"
-        # self.driver.execute_script(js)
-        # time.sleep(10)
-        # js = "var q=document.documentElement.scrollTop=4500"
-        # self.driver.execute_script(js)
-        # time.sleep(10)
-        # js = "var q=document.documentElement.scrollTop=6000"
-        # self.driver.execute_script(js)
-        # time.sleep(10)
+        # 自定义滑动页面
+        js = "var q=document.documentElement.scrollTop=2000"
+        self.driver.execute_script(js)
+        time.sleep(1)
+        js = "var q=document.documentElement.scrollTop=4500"
+        self.driver.execute_script(js)
+        time.sleep(1)
+        js = "var q=document.documentElement.scrollTop=8000"
+        self.driver.execute_script(js)
+        time.sleep(1)
         response = HtmlResponse(request.url,body=self.driver.page_source,request=request,encoding='utf-8')
 
         return response

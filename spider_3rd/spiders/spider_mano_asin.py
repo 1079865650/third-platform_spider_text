@@ -46,8 +46,6 @@ class SpiderManoSpider(scrapy.Spider):
     asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site)\
         .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site))\
         .filter(and_( AsinTask.plat == 'Mano', )).distinct()
-    # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
-    # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
 
     # .all()
     sess.close()

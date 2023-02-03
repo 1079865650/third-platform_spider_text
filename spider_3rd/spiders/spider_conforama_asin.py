@@ -48,15 +48,9 @@ class SpiderConforamaSpider(scrapy.Spider):
     asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site) \
         .outerjoin(AsinAtrr, and_(AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)) \
         .filter(and_(AsinTask.status == None, AsinTask.plat == 'Conforama')).distinct()
-    # asintasks = sess.query(AsinTask, AsinTask.id, AsinTask.asin, AsinTask.href, AsinTask.plat, AsinTask.site).outerjoin(AsinAtrr, AsinTask.asin == AsinAtrr.asin, AsinTask.site == AsinAtrr.site)
-    # .filter(and_(AsinTask.status == None, AsinTask.plat == 'CD', AsinAtrr.brand.is_(None))).distinct()
 
     # .all()
     sess.close()
-    # print("asintasks================")
-    # print(type(asintasks))   <class 'sqlalchemy.orm.query.Query'>
-    # print(asintasks)
-    # sys.exit()
 
     headers_html = {
         'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
