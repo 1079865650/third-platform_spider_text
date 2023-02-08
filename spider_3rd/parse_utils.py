@@ -28,6 +28,7 @@ def extract_price(string_value):
 def add_decimal(string_value):
     # 处理 99.  改成99.00
     # print("string_value=================="+string_value)
+    string_value = string_value.replace(' ', '')
     index = string_value.index('.')+1
     length = len(string_value)
     if index == length:

@@ -52,6 +52,7 @@ CONCURRENT_REQUESTS = 5
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 
 DOWNLOADER_MIDDLEWARES = {
+   # 'spider_3rd.middlewares.WayfairSpiderDownloaderMiddlewareBak': 543,
    'spider_3rd.middlewares.Spider3RdDownloaderMiddleware': 543,
 }
 

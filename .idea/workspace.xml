@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9318aa31-51e2-4ab5-9d31-b12ff045782e" name="Changes" comment="2023-02-03 添加图片链接">
+    <list default="true" id="9318aa31-51e2-4ab5-9d31-b12ff045782e" name="Changes" comment="2023-02-06 优化框架，添加图片的src">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/spiders/spider_conforama_asin.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/spiders/spider_conforama_asin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/spiders/spider_conforama_category.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/spiders/spider_conforama_category.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spider_3rd/spiders/spider_mano_category.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/spiders/spider_mano_category.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spider_3rd/middlewares.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/middlewares.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spider_3rd/parse_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/parse_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spider_3rd/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spider_3rd/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider_3rd/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +62,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.test">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="third-platform_spider_text" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -152,8 +153,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.parse_utils" />
         <item itemvalue="Python.spider_conforama_category" />
       </list>
@@ -180,7 +181,9 @@
       <workItem from="1675127121084" duration="13469000" />
       <workItem from="1675403600043" duration="307000" />
       <workItem from="1675408795679" duration="9917000" />
-      <workItem from="1675646504050" duration="8417000" />
+      <workItem from="1675646504050" duration="18425000" />
+      <workItem from="1675731570379" duration="3465000" />
+      <workItem from="1675818294822" duration="6003000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1673842665932</created>
@@ -224,7 +227,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675419189243</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="2023-02-06 优化框架，添加图片的src">
+      <created>1675655179922</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1675655179922</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -241,7 +251,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="ziel_spider_3rd/dev" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>
@@ -260,7 +270,8 @@
     <MESSAGE value="添加mano列表页爬取和详情爬取" />
     <MESSAGE value="2023-02-03" />
     <MESSAGE value="2023-02-03 添加图片链接" />
-    <option name="LAST_COMMIT_MESSAGE" value="2023-02-03 添加图片链接" />
+    <MESSAGE value="2023-02-06 优化框架，添加图片的src" />
+    <option name="LAST_COMMIT_MESSAGE" value="2023-02-06 优化框架，添加图片的src" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/third_platform_spider_text$main.coverage" NAME="main Coverage Results" MODIFIED="1673943649978" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd/spiders" />
@@ -269,6 +280,7 @@
     <SUITE FILE_PATH="coverage/third_platform_spider_text$spider_conforama_category.coverage" NAME="spider_conforama_category Coverage Results" MODIFIED="1673941567330" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd/spiders" />
     <SUITE FILE_PATH="coverage/third_platform_spider$main.coverage" NAME="main Coverage Results" MODIFIED="1673849709823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd/spiders" />
     <SUITE FILE_PATH="coverage/third_platform_spider_text$parse_utils.coverage" NAME="parse_utils Coverage Results" MODIFIED="1674027380787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd" />
+    <SUITE FILE_PATH="coverage/third_platform_spider_text01$test.coverage" NAME="test Coverage Results" MODIFIED="1675823349752" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd" />
     <SUITE FILE_PATH="coverage/third_platform_spider_text01$main.coverage" NAME="main Coverage Results" MODIFIED="1675649387644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/spider_3rd/spiders" />
   </component>
 </project>

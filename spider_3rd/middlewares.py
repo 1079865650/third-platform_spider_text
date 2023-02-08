@@ -135,8 +135,7 @@ class Spider3RdDownloaderMiddleware:
         # js = "var q=document.documentElement.scrollTop=8000"
         # self.driver.execute_script(js)
         # time.sleep(1)
-        response = HtmlResponse(request.url,body=self.driver.page_source,request=request,encoding='utf-8')
-
+        response = HtmlResponse(request.url, body=self.driver.page_source, request=request, encoding='utf-8')
         return response
 
     def process_response(self, request, response, spider):

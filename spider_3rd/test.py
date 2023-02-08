@@ -8,7 +8,7 @@ import datetime
 from db_utils import get_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from spider_3rd.items import TaskTemplate
+
 from parse_utils import *
 from datetime import datetime
 
@@ -25,27 +25,27 @@ if __name__ == '__main__':
     # site_category = site[5:7]
     # href_split = href[-8:]
     # print(href_split)
-    engine = get_engine
-    session = sessionmaker(bind=engine)
-    sess = session()
-    Base = declarative_base()
-    CategoryTask = type('task', (Base, TaskTemplate), {'__tablename__': 'sp_plat_site_task'})
-    categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code
-                               , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
-        .filter(CategoryTask.plat == 'Conforama').distinct()
-    sess.query()
-    # str = '2023-01-19 13:50:01.959412'
-    date = datetime.now().strftime("%Y-%m-%d")
-    # a = 2
-    # if a ==1 or a==2:
-    #     print("没问题")
-    str1 = 'Aaa'
-    # str2 = '4/5'
-    # if '/' in str2:
-    #     str2 = str2[:1]
-    #     print(str2)
-    a = "123123456."
-    c = "123123456.123"
+    # engine = get_engine
+    # session = sessionmaker(bind=engine)
+    # sess = session()
+    # Base = declarative_base()
+    # CategoryTask = type('task', (Base, TaskTemplate), {'__tablename__': 'sp_plat_site_task'})
+    # categorytasks = sess.query(CategoryTask.id, CategoryTask.category_link, CategoryTask.task_code
+    #                            , CategoryTask.plat, CategoryTask.site, CategoryTask.link_maxpage)\
+    #     .filter(CategoryTask.plat == 'Conforama').distinct()
+    # sess.query()
+    # # str = '2023-01-19 13:50:01.959412'
+    # date = datetime.now().strftime("%Y-%m-%d")
+    # # a = 2
+    # # if a ==1 or a==2:
+    # #     print("没问题")
+    # str1 = 'Aaa'
+    # # str2 = '4/5'
+    # # if '/' in str2:
+    # #     str2 = str2[:1]
+    # #     print(str2)
+    # a = "123123456."
+    # c = "123123456.123"
 
     # index = a.index('1')
     # b = a.find('1',3,-1)
@@ -83,18 +83,19 @@ if __name__ == '__main__':
     # print(type(list2))
 
 
-count = 1
-def judge(self):
-    global count
-    count = 2
-    print("方法里========"+str(count))
-print(type(count))
-print("方法外======="+str(count))
-def judge1():
-    print("方法2里========"+str(count))
-
-# judge()
-# judge1()
-print("最新版本")
-
+# count = 1
+# def judge(self):
+#     global count
+#     count = 2
+#     print("方法里========"+str(count))
+# print(type(count))
+# print("方法外======="+str(count))
+# def judge1():
+#     print("方法2里========"+str(count))
+#
+# # judge()
+# # judge1()
+# print("最新版本")
+    s = '  sad  sad wqe'
+    print(s.replace(' ',''))
 
